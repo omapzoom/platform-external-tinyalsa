@@ -447,3 +447,35 @@ int mixer_ctl_set_enum_by_string(struct mixer_ctl *ctl, const char *string)
     return -EINVAL;
 }
 
+#ifdef OMAP_ENHANCEMENT
+int mixer_get_card_name(int card, char *str, size_t strlen)
+{
+    struct snd_ctl_card_info info;
+    char fn[256];
+    int fd;
+    int ret;
+
+    if (card > MAX_CARD_COUNT)
+        return -EINVAL;
+
+    if (!str)
+        return -EINVAL;
+
+    snprintf(fn, sizeof(fn), "/dev/snd/controlC%u", card);
+    fd = open(fn, O_RDWR);
+    if (fd < 0)
+        return -ENODEV;
+
+    ret = ioctl(fd, SNDRV_CTL_IOCTL_CARD_INFO, &info);
+    if (ret < 0) {
+        close(fd);
+        return ret;
+    }
+
+    strncpy(str, (char *)info.id, strlen);
+
+    close(fd);
+
+    return 0;
+}
+#endif
