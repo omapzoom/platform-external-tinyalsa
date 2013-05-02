@@ -114,6 +114,10 @@ enum mixer_ctl_type {
     MIXER_CTL_TYPE_MAX,
 };
 
+#define MAX_CARD_COUNT 32
+
+int mixer_get_card_name(int card, char *str, size_t strlen);
+
 /* Open and close a stream */
 struct pcm *pcm_open(unsigned int card, unsigned int device,
                      unsigned int flags, struct pcm_config *config);
